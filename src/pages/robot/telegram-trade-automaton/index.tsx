@@ -4,9 +4,9 @@ import React, { useState } from 'react'
 import Grid from '@mui/material/Grid'
 
 // ** Import Custom Components
-import InformationBarCard from 'src/layouts/components/telegram-trade-automaton/information-bar'
-import TelegramConnectionDialog from 'src/layouts/components/telegram-trade-automaton/telegram-connection-dialog'
-import TradingAlgorithmWizardCard from 'src/layouts/components/telegram-trade-automaton/trading-algorithm-wizard'
+import InformationBarCard from 'src/views/pages/telegram-trade-automaton/InformationBar'
+import TradingAlgorithmWizardCard from 'src/views/pages/telegram-trade-automaton/TradingAlgorithmWizard'
+import TelegramConnectionDialog from 'src/views/pages/telegram-trade-automaton/TelegramConnectionDialog'
 
 const TelegramTradeAutomaton = () => {
   const [loading, setLoading] = useState(false)

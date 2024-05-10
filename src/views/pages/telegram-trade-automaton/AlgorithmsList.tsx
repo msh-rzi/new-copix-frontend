@@ -9,16 +9,14 @@ import ListItemButton from '@mui/material/ListItemButton'
 import ListItemIcon from '@mui/material/ListItemIcon'
 import ListItemText from '@mui/material/ListItemText'
 import Checkbox from '@mui/material/Checkbox'
-import CircularProgress from '@mui/material/CircularProgress'
 
 // ** Import Custom Component
 import Icon from 'src/@core/components/icon'
+import TradingAlgorithmWizardContentWrapper from './TradingAlgorithmWizardContentWrapper'
 
 // ** Import Hook
 import useTradingAlgorithmWizardStore, {
-  AlgorithmType,
   algorithmKeys,
-  algorithmKeysType,
   initialAlgorithm
 } from 'src/zustand/useTradingAlgorithmWizardStore'
 
@@ -29,8 +27,8 @@ import { v4 as uuid } from 'uuid'
 import LoadingButton from '@mui/lab/LoadingButton'
 
 const AlgorithmsList = () => {
-  const { wizardData, set_3, set_4, setStep } = useTradingAlgorithmWizardStore()
-  const { algorithmsList, selectedAlgorithm } = wizardData._3
+  const { wizardData, setAlgorithmListState, setAlgorithmComposerState, setStep } = useTradingAlgorithmWizardStore()
+  const { algorithmsList, selectedAlgorithm } = wizardData.AlgorithmListState
   const [loading, setLoading] = useState(false)
 
   const getAlgorithms = async () => {
@@ -39,12 +37,12 @@ const AlgorithmsList = () => {
       url: endpoints.algorithm.GET_USER_ALGORITHMS_BY_TELEGRAM_CHANNEL_ID,
       method: 'post',
       data: {
-        channelId: wizardData._1.selectedChannel?.id
+        channelId: wizardData.TelegramChannelListState.selectedChannel?.id
       }
     })
     if (req.isOk) {
       setLoading(false)
-      set_3({ ...wizardData._3, algorithmsList: req.data })
+      setAlgorithmListState({ algorithmsList: req.data })
     } else {
       console.log(req.error)
       setLoading(false)
@@ -64,60 +62,37 @@ const AlgorithmsList = () => {
     })
     const selectedAlgorithm = { ...algorithmObj, usedAlgorithmKeys }
 
-    set_3({
-      ...wizardData._3,
-      selectedAlgorithm
-    })
+    setAlgorithmListState({ selectedAlgorithm })
 
-    set_4(selectedAlgorithm)
+    setAlgorithmComposerState(selectedAlgorithm)
   }
 
   const newAlgorithm = () => {
-    const algName = wizardData._1.selectedChannel!.title + algorithmsList.length
+    const algName = wizardData.TelegramChannelListState.selectedChannel!.title + algorithmsList.length
     const newAlgorithm = {
       ...initialAlgorithm,
-      algorithmicText: wizardData._4.algorithmicText,
+      algorithmicText: wizardData.AlgorithmComposerState.algorithmicText,
       algorithmName: { title: initialAlgorithm.algorithmName.title, value: algName },
       id: uuid()
     }
 
-    set_3({
-      ...wizardData._3,
-      selectedAlgorithm: newAlgorithm
-    })
-    set_4(newAlgorithm)
-    setStep(wizardData.step + 1)
+    setAlgorithmListState({ selectedAlgorithm: newAlgorithm })
+    setAlgorithmComposerState(newAlgorithm)
+    setStep('ExchangeLinker')
   }
 
-  console.log({ wizardData: wizardData._3 })
-
   return (
-    <Stack gap={4} flex={1}>
-      <Stack flexDirection='row' alignItems='center' justifyContent='space-between'>
-        <Typography>{`Select an algorithm to modify or create new one { Channel : ${wizardData._1.selectedChannel?.title} }`}</Typography>
-        <Stack flexDirection='row' gap={2}>
-          <LoadingButton
-            loading={loading}
-            size='small'
-            variant='outlined'
-            onClick={getAlgorithms}
-            startIcon={<Icon icon='tabler:refresh' />}
-          >
-            Refresh
-          </LoadingButton>
-          <LoadingButton
-            size='small'
-            variant='contained'
-            onClick={newAlgorithm}
-            startIcon={<Icon icon='tabler:plus' />}
-          >
-            New
-          </LoadingButton>
-        </Stack>
-      </Stack>
-      {loading ? (
-        <CircularProgress sx={{ margin: 'auto' }} />
-      ) : !algorithmsList.length ? (
+    <TradingAlgorithmWizardContentWrapper
+      title='Select an algorithm to modify or create new one'
+      loading={loading}
+      onRefresh={getAlgorithms}
+      topAdornment={
+        <LoadingButton size='small' variant='contained' onClick={newAlgorithm} startIcon={<Icon icon='tabler:plus' />}>
+          New
+        </LoadingButton>
+      }
+    >
+      {!algorithmsList.length ? (
         <Stack
           sx={theme => ({
             flex: 1,
@@ -163,7 +138,7 @@ const AlgorithmsList = () => {
           })}
         </List>
       )}
-    </Stack>
+    </TradingAlgorithmWizardContentWrapper>
   )
 }
 
