@@ -76,6 +76,7 @@ export const AlgorithmName: React.FC = () => {
       <Stack sx={{ flexDirection: 'row' }}>
         <TextField
           value={value}
+          autoFocus
           size='small'
           sx={{ marginRight: 'auto', flex: 1 }}
           onChange={e => set_4({ algorithmName: { title, value: e.target.value } })}

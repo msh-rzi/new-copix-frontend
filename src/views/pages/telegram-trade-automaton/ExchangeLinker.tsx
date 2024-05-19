@@ -167,7 +167,7 @@ const ExchangeLinker = () => {
                   disabled={isConnected}
                   loading={!isConnected && apiCredential.id === e.id && Boolean(apiCredential.id)}
                   variant='contained'
-                  sx={{ margin: 'left' }}
+                  sx={{ ml: 2 }}
                 >
                   {isConnected ? 'Connected' : 'Connect'}
                 </LoadingButton>

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 
 // ** Import Mui Component
 import Stack from '@mui/material/Stack'
@@ -8,19 +8,81 @@ import List from '@mui/material/List'
 import ListItem from '@mui/material/ListItem'
 import ListItemButton from '@mui/material/ListItemButton'
 import ListItemText from '@mui/material/ListItemText'
+import CircularProgress from '@mui/material/CircularProgress'
+import Tooltip from '@mui/material/Tooltip'
 
 // ** Import Custom Component
 import TradingAlgorithmWizardContentWrapper from './TradingAlgorithmWizardContentWrapper'
 
 // ** Import Hook
-import useTradingAlgorithmWizardStore, { algorithmKeys } from 'src/zustand/useTradingAlgorithmWizardStore'
+import useTradingAlgorithmWizardStore from 'src/zustand/useTradingAlgorithmWizardStore'
+import { apiGateway } from 'src/utils/api-gateway'
+import { endpoints } from 'src/constants/urls'
+
+type obj = {
+  Symbol: ''
+  Market: ''
+  Position: ''
+  Leverage: ''
+  EntryTargets: []
+  TakeProfitTargets: []
+  StopLoss: ''
+}
 
 const AlgorithmTester = () => {
   const { wizardData } = useTradingAlgorithmWizardStore()
+  const [initAi, setInitAi] = useState(false)
+  const [loading, setLoading] = React.useState(false)
+  const [test, setTest] = useState<obj[]>([])
 
-  const onSelectMessage = (msg: Message) => {
-    console.log({ msg })
+  const initAiFunc = async () => {
+    const req = await apiGateway({
+      url: endpoints.chatgpt.INIT_AI
+    })
+
+    if (req.isOk) setInitAi(true)
+
+    return req.isOk
   }
+
+  useEffect(() => {
+    initAiFunc()
+  }, [])
+
+  function findStringsBetweenBackticks(inputString: string) {
+    const regex = /```json(.*?)```/gs
+    const matches = []
+    let match
+    while ((match = regex.exec(inputString)) !== null) {
+      matches.push(JSON.parse(match[1].replaceAll('\n', '')))
+    }
+
+    return matches
+  }
+
+  const onSelectMessage = async (msg: Message) => {
+    if (!initAi) await initAiFunc()
+
+    setLoading(true)
+
+    const req = await apiGateway({
+      url: endpoints.chatgpt.GENERATE_COMPLETION,
+      method: 'post',
+      data: { prompt: msg.message }
+    })
+
+    if (req.isOk) {
+      setLoading(false)
+      const stringsBetweenBackticks = findStringsBetweenBackticks(req.data)
+      console.log({ stringsBetweenBackticks })
+      console.log({ req: req.data })
+      setTest(stringsBetweenBackticks)
+    } else {
+      setLoading(false)
+    }
+  }
+
+  console.log(test)
 
   return (
     <TradingAlgorithmWizardContentWrapper title='Select a part of message and click on a button'>
@@ -37,11 +99,13 @@ const AlgorithmTester = () => {
           })}
         >
           {wizardData.MessagePickerState.messagesList.map(msg => (
-            <ListItem key={msg.id} disablePadding sx={{ mt: 1 }}>
-              <ListItemButton role={undefined} dense onClick={() => onSelectMessage(msg)}>
-                <ListItemText>{msg.message}</ListItemText>
-              </ListItemButton>
-            </ListItem>
+            <Tooltip key={msg.id} title={msg.message}>
+              <ListItem disablePadding sx={{ mt: 1 }}>
+                <ListItemButton role={undefined} dense onClick={() => onSelectMessage(msg)}>
+                  <ListItemText>{msg.message}</ListItemText>
+                </ListItemButton>
+              </ListItem>
+            </Tooltip>
           ))}
         </List>
         <Stack
@@ -55,18 +119,22 @@ const AlgorithmTester = () => {
             borderRadius: '5px'
           })}
         >
-          <Typography>{`Algorithm Name : ${wizardData.AlgorithmComposerState.algorithmName.value}`}</Typography>
-          <Divider />
-          {algorithmKeys.map((key, index) => {
-            return (
-              <>
-                <Typography variant='subtitle2' key={key} sx={{ width: '100%' }}>
-                  {key}
-                </Typography>
-                {index !== algorithmKeys.length - 1 && <Divider />}
-              </>
-            )
-          })}
+          {loading ? (
+            <CircularProgress sx={{ margin: 'auto' }} />
+          ) : (
+            <>
+              <Typography>{`Algorithm Name : ${wizardData.AlgorithmComposerState.algorithmName.value}`}</Typography>
+              <Divider />
+              {test.map((obj, index) => {
+                return (
+                  <>
+                    <MessageDisplay {...obj} />
+                    {index !== test.length - 1 && <Divider sx={{ my: 2 }} />}
+                  </>
+                )
+              })}
+            </>
+          )}
         </Stack>
       </Stack>
     </TradingAlgorithmWizardContentWrapper>
@@ -74,3 +142,15 @@ const AlgorithmTester = () => {
 }
 
 export default AlgorithmTester
+
+export const MessageDisplay: React.FC<obj> = props => {
+  return (
+    <>
+      {Object.entries(props).map(([key, value]) => (
+        <Typography variant='subtitle2' key={key} sx={{ width: '100%' }}>
+          {`${key} : ${value}`}
+        </Typography>
+      ))}
+    </>
+  )
+}

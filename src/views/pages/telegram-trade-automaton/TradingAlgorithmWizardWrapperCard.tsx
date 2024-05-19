@@ -2,10 +2,10 @@ import React from 'react'
 
 // ** Import Mui Components
 import Stack from '@mui/material/Stack'
-import Button from '@mui/material/Button'
 import Divider from '@mui/material/Divider'
 import Breadcrumbs from '@mui/material/Breadcrumbs'
 import Typography from '@mui/material/Typography'
+import LoadingButton from '@mui/lab/LoadingButton'
 
 // ** Import Custom Components
 import Card from 'src/@core/components/mui/card'
@@ -15,6 +15,7 @@ interface TradingAlgorithmWizardLayoutCardProps {
   isLastStep: boolean
   isFirstStep: boolean
   isNextDisabled: boolean
+  saveLoading: boolean
   onNextClick(): void
   onPrevClick(): void
   onSaveClick(): void
@@ -27,6 +28,7 @@ const TradingAlgorithmWizardLayoutCard: React.FC<TradingAlgorithmWizardLayoutCar
   isLastStep,
   isFirstStep,
   isNextDisabled = false,
+  saveLoading = false,
   onNextClick,
   onPrevClick,
   onSaveClick,
@@ -64,14 +66,15 @@ const TradingAlgorithmWizardLayoutCard: React.FC<TradingAlgorithmWizardLayoutCar
           </Stack>
           <Divider sx={{ marginTop: 'auto' }} />
           <Stack flexDirection='row-reverse' gap={4}>
-            <Button
+            <LoadingButton
               disabled={isNextDisabled}
               onClick={() => (isLastStep ? onSaveClick() : onNextClick())}
               variant='contained'
+              loading={saveLoading}
             >
               {isLastStep ? 'Save' : 'Next'}
-            </Button>
-            {!isFirstStep && <Button onClick={onPrevClick}>Previous</Button>}
+            </LoadingButton>
+            {!isFirstStep && <LoadingButton onClick={onPrevClick}>Previous</LoadingButton>}
           </Stack>
         </>
       )}

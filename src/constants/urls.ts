@@ -4,12 +4,15 @@ const backendUrl = 'http://localhost:3000/api/v1'
 // ** Assign Base URLs
 const telegramUrl = backendUrl + '/telegram'
 const telegramPages = '/bots/telegram'
+
 const algorithmUrl = backendUrl + '/algorithm'
-const usersUrl = backendUrl + '/users'
-const coinsUrl = backendUrl + '/coins'
+
 const authUrl = backendUrl + '/auth'
+
 const exchangeUrl = backendUrl + '/exchange'
 const exchangePages = '/exchange'
+
+const chatgptUrl = backendUrl + '/chatgpt'
 
 export const endpoints = {
   // ** Auth URL
@@ -32,6 +35,7 @@ export const endpoints = {
 
   // ** Algorithm URL
   algorithm: {
+    ADD_ALGORITHM: algorithmUrl + '/add-algorithm',
     GET_USER_ALGORITHMS_BY_TELEGRAM_CHANNEL_ID: algorithmUrl + '/get-user-algorithms-by-telegram-channel-id'
   },
 
@@ -47,6 +51,7 @@ export const endpoints = {
     LOG_OUT: telegramUrl + '/logout',
     CHECK_CONNECTION: telegramUrl + '/check-connection',
     GET_ME: telegramUrl + '/get-me',
+    START_LISTENING: telegramUrl + '/start-listening',
 
     // ** Pages
     SELECT_MODE: telegramPages,
@@ -72,6 +77,8 @@ export const endpoints = {
     CONNECT_TO_BINGX: exchangeUrl + '/connect-to-bingx',
     ADD_ALGORITHM: exchangeUrl + '/add-algorithm',
     ADD_USER_EXCHANGE: exchangeUrl + '/add-user-exchange',
+    GET_BYBIT_BALANCE: exchangeUrl + '/get-bybit-balance',
+    GET_BYBIT_ACTIVE_ORDERS: exchangeUrl + '/get-bybit-active-orders',
 
     // ** Pages
     BINGX: exchangePages + '/bingx',
@@ -81,21 +88,9 @@ export const endpoints = {
     EXCHANGES: 'exchanges'
   },
 
-  // ** Users Bot URL
-  users: {
-    CREATE: usersUrl,
-    LIST: usersUrl,
-    GET_BY_ID: (id: number) => usersUrl + `/${id}`,
-    UPDATE: (id: number) => usersUrl + `/${id}`,
-    DELETE: (id: number) => usersUrl + `/${id}`
-  },
-
-  // ** Coins Bot URL
-  coins: {
-    CREATE: coinsUrl,
-    LIST: coinsUrl,
-    GET_BY_ID: (id: number) => coinsUrl + `/${id}`,
-    UPDATE: (id: number) => coinsUrl + `/${id}`,
-    DELETE: (id: number) => coinsUrl + `/${id}`
+  // ** Chat GPT URL
+  chatgpt: {
+    INIT_AI: '/init-ai',
+    GENERATE_COMPLETION: chatgptUrl + '/generate-completion'
   }
 }

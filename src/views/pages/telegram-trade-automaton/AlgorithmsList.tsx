@@ -42,7 +42,24 @@ const AlgorithmsList = () => {
     })
     if (req.isOk) {
       setLoading(false)
-      setAlgorithmListState({ algorithmsList: req.data })
+      const converted = req.data.map((item: any) => ({
+        id: item.id.toString(),
+        selectedText: null,
+        algorithmicText: item.algorithm,
+        usedAlgorithmKeys: algorithmKeys.filter(key => item.algorithm.includes(`{${key}}`)),
+        purchaseVolume: {
+          title: wizardData.AlgorithmListState.selectedAlgorithm.purchaseVolume.title,
+          volume: item.purchaseVolume,
+          isPercentage: item.purchaseType === 'percent'
+        },
+        algorithmName: {
+          title: wizardData.AlgorithmListState.selectedAlgorithm.algorithmName.title,
+          value: item.algorithmName
+        }
+      }))
+
+      console.log({ converted })
+      setAlgorithmListState({ algorithmsList: converted })
     } else {
       console.log(req.error)
       setLoading(false)
@@ -78,7 +95,7 @@ const AlgorithmsList = () => {
 
     setAlgorithmListState({ selectedAlgorithm: newAlgorithm })
     setAlgorithmComposerState(newAlgorithm)
-    setStep('ExchangeLinker')
+    setStep('AlgorithmComposer')
   }
 
   return (

@@ -13,8 +13,9 @@ import CircularProgress from '@mui/material/CircularProgress'
 // ** Import Utils
 import { apiGateway } from 'src/utils/api-gateway'
 import { endpoints } from 'src/constants/urls'
+
+// ** Import Hooks
 import useTelegramStore from 'src/zustand/useTelegramStore'
-import FallbackSpinner from 'src/@core/components/spinner'
 
 const EnterNumber: React.FC<{ onNextClick: () => void }> = ({ onNextClick }) => {
   const [phoneNumber, setPhoneNumber] = useState('')
@@ -184,9 +185,7 @@ const TelegramConnectionDialog: React.FC<{
     setIsConnectedToTelegram(false)
   }
 
-  if (telegramData.connectionStatus) return null
-
-  if (loading) return <FallbackSpinner title='Checking Telegram Connection...' />
+  if (telegramData.connectionStatus || loading) return null
 
   return (
     <Dialog maxWidth='md' fullWidth open={telegramData.openAuthDialog} onClose={onClose}>

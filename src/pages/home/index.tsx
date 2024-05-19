@@ -1,36 +1,65 @@
+import { useState } from 'react'
+
 // ** MUI Imports
-import Card from '@mui/material/Card'
 import Grid from '@mui/material/Grid'
-import Typography from '@mui/material/Typography'
-import CardHeader from '@mui/material/CardHeader'
-import CardContent from '@mui/material/CardContent'
+import Stack from '@mui/material/Stack'
+import Button from '@mui/material/Button'
+
+// ** Import Cunstom Components
+import Card from 'src/@core/components/mui/card'
+
+// ** Import Stuff
+import { apiGateway } from 'src/utils/api-gateway'
+import { endpoints } from 'src/constants/urls'
+import { Typography } from '@mui/material'
 
 const Home = () => {
+  const [balance, setBalance] = useState([])
+  const [activeOrders, setActiveOrders] = useState([])
+
+  const getBalance = async () => {
+    const req = await apiGateway({
+      url: endpoints.exchange.GET_BYBIT_BALANCE
+    })
+
+    if (req.isOk) {
+      setBalance(req.data)
+    }
+  }
+  const getActiveOrders = async () => {
+    const req = await apiGateway({
+      url: endpoints.exchange.GET_BYBIT_ACTIVE_ORDERS
+    })
+
+    if (req.isOk) {
+      setActiveOrders(req.data)
+    }
+  }
+
   return (
     <Grid container spacing={6}>
       <Grid item xs={12}>
         <Card>
-          <CardHeader title='Kick start your project 🚀'></CardHeader>
-          <CardContent>
-            <Typography sx={{ mb: 2 }}>All the best for your new project.</Typography>
-            <Typography>
-              Please make sure to read our Template Documentation to understand where to go from here and how to use our
-              template.
-            </Typography>
-          </CardContent>
+          <Stack alignItems='center' flexDirection='row' gap={4}>
+            <Button variant='contained' onClick={getBalance}>
+              Refresh
+            </Button>
+            <Button variant='contained' onClick={getActiveOrders}>
+              Get active orders
+            </Button>
+          </Stack>
         </Card>
       </Grid>
-      <Grid item xs={12}>
-        <Card>
-          <CardHeader title='ACL and JWT 🔒'></CardHeader>
-          <CardContent>
-            <Typography sx={{ mb: 2 }}>
-              Access Control (ACL) and Authentication (JWT) are the two main security features of our template and are implemented in the starter-kit as well.
-            </Typography>
-            <Typography>Please read our Authentication and ACL Documentations to get more out of them.</Typography>
-          </CardContent>
-        </Card>
-      </Grid>
+      {balance.map((coin: any) => (
+        <Grid item xs={4} key={coin.coin}>
+          <Card>
+            <Typography>{coin.coin}</Typography>
+            <Typography>equity: {coin.equity}</Typography>
+            <Typography>usd value: {coin.usdValue}</Typography>
+            <Typography>wallet balance: {coin.walletBalance}</Typography>
+          </Card>
+        </Grid>
+      ))}
     </Grid>
   )
 }

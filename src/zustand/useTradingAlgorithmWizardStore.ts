@@ -10,6 +10,16 @@ export const algorithmKeys: algorithmKeysType[] = [
   'StopLoss'
 ]
 
+// const obj = {
+//   Symbol: '',
+//   Market: '',
+//   Position: '',
+//   Leverage: '',
+//   EntryTargets: [],
+//   TakeProfitTargets: [],
+//   StopLoss: ''
+// }
+
 // ***** Initial values
 export const initialPurchaseVolume = { title: 'Purchase Volume ( $ Or % )', volume: 5, isPercentage: false }
 
@@ -55,12 +65,14 @@ const steps: UseTradingAlgorithmWizardStoreStep[] = [
   'AlgorithmsList',
   'AlgorithmComposer',
   'ExchangeLinker',
-  'AlgorithmTester'
+  'AlgorithmTester',
+  'AlgorithmSaver'
 ]
 
 type WizardState = {
   wizardData: Wizard
   setStep: (step: UseTradingAlgorithmWizardStoreStep) => void
+  resetWizardData: () => void
   setTelegramChannelListState: (data: Partial<TelegramChannelListStateType>) => void
   setMessagePickerState: (data: Partial<MessagePickerStateType>) => void
   setAlgorithmListState: (data: Partial<AlgorithmListStateType>) => void
@@ -68,7 +80,7 @@ type WizardState = {
   setExchangeLinkerState: (data: Partial<ExchangeLinkerStateType>) => void
 }
 
-const initialData: Wizard = {
+export const initialWizardData: Wizard = {
   stepsList: steps,
   step: 'ChannelsList',
   TelegramChannelListState: initialTelegramChannelListState,
@@ -80,8 +92,9 @@ const initialData: Wizard = {
 }
 
 const useTradingAlgorithmWizardStore = create<WizardState>((set, get) => ({
-  wizardData: initialData,
+  wizardData: initialWizardData,
   setStep: step => set({ wizardData: { ...get().wizardData, step } }),
+  resetWizardData: () => set({ wizardData: initialWizardData }),
   setTelegramChannelListState: data =>
     set({
       wizardData: {

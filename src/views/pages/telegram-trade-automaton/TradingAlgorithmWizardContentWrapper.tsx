@@ -28,18 +28,20 @@ const TradingAlgorithmWizardContentWrapper: React.FC<TradingAlgorithmWizardConte
     <Stack gap={2} flex={1}>
       <Stack flexDirection='row' alignItems='center' justifyContent='space-between'>
         <Typography>{title}</Typography>
-        {onRefresh && (
-          <LoadingButton
-            loading={loading}
-            size='small'
-            variant='outlined'
-            onClick={onRefresh}
-            startIcon={<Icon icon='tabler:refresh' />}
-          >
-            Refresh
-          </LoadingButton>
-        )}
-        {topAdornment}
+        <Stack flexDirection='row' gap={2}>
+          {onRefresh && (
+            <LoadingButton
+              loading={loading}
+              size='small'
+              variant='outlined'
+              onClick={onRefresh}
+              startIcon={<Icon icon='tabler:refresh' />}
+            >
+              Refresh
+            </LoadingButton>
+          )}
+          {topAdornment}
+        </Stack>
       </Stack>
       {loading ? <CircularProgress sx={{ margin: 'auto' }} /> : children}
     </Stack>
