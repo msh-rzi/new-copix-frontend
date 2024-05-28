@@ -42,7 +42,7 @@ const AlgorithmsList = () => {
     })
     if (req.isOk) {
       setLoading(false)
-      const converted = req.data.map((item: any) => ({
+      const converted = req.data.result.userAlgorithms.map((item: any) => ({
         id: item.id.toString(),
         selectedText: null,
         algorithmicText: item.algorithm,

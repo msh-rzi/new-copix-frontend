@@ -141,9 +141,7 @@ const Register = () => {
     resolver: yupResolver(schema)
   })
 
-  const onSubmit: SubmitHandler<RegisterParams> = (data: RegisterParams, evn: any) => {
-    evn.preventDefault()
-    console.log('asdsad')
+  const onSubmit: SubmitHandler<RegisterParams> = (data: RegisterParams) => {
     const { firstName, lastName, email, password } = data
 
     console.log(data)
@@ -333,7 +331,11 @@ const Register = () => {
                   </Box>
                 }
               />
-
+              {auth?.error?.type === 'register' && (
+                <Typography variant='body2' color='red'>
+                  {auth.error.message}
+                </Typography>
+              )}
               <Button fullWidth type='submit' variant='contained' sx={{ mb: 4 }}>
                 Sign up
               </Button>

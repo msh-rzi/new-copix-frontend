@@ -16,7 +16,7 @@ import { apiGateway } from 'src/utils/api-gateway'
 import { endpoints } from 'src/constants/urls'
 
 const TradingAlgorithmWizardCard: React.FC<{ disableView: boolean }> = ({ disableView }) => {
-  const { wizardData, setStep, resetWizardData } = useTradingAlgorithmWizardStore()
+  const { wizardData, setStep } = useTradingAlgorithmWizardStore()
   const { stepsList, step, TelegramChannelListState, MessagePickerState, AlgorithmListState, AlgorithmComposerState } =
     wizardData
   const [saveLoading, setSaveLoading] = useState(false)
@@ -55,7 +55,7 @@ const TradingAlgorithmWizardCard: React.FC<{ disableView: boolean }> = ({ disabl
     })
     if (req.isOk) {
       setSaveLoading(false)
-      resetWizardData()
+      setStep('ChannelsList')
     } else {
       setSaveLoading(false)
     }

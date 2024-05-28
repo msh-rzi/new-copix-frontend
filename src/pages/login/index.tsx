@@ -272,6 +272,11 @@ const LoginPage = () => {
                   Forgot Password?
                 </Typography>
               </Box>
+              {auth?.error?.type === 'login' && (
+                <Typography variant='body2' color='red'>
+                  {auth.error.message}
+                </Typography>
+              )}
               <Button fullWidth type='submit' variant='contained' sx={{ mb: 4 }}>
                 Login
               </Button>

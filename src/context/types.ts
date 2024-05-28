@@ -25,6 +25,7 @@ export type UserDataType = {
 export type AuthValuesType = {
   loading: boolean
   logout: () => void
+  error?: { type: 'login' | 'register'; message: string }
   user: UserDataType | null
   setLoading: (value: boolean) => void
   setUser: (value: UserDataType | null) => void

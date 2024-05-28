@@ -12,6 +12,8 @@ import Avatar from '@mui/material/Avatar'
 
 // ** Import Custom Components
 import TradingAlgorithmWizardContentWrapper from './TradingAlgorithmWizardContentWrapper'
+import CustomScrollbar from 'src/@core/components/scrollbar'
+import ExchangeLinkerApiCredentialDialog from 'src/layouts/components/telegram-trade-automaton/ExchangeLinkerApiCredentialDialog'
 
 // ** Import Hooks
 import useTradingAlgorithmWizardStore from 'src/zustand/useTradingAlgorithmWizardStore'
@@ -19,7 +21,6 @@ import useTradingAlgorithmWizardStore from 'src/zustand/useTradingAlgorithmWizar
 // ** Import Stuff
 import { apiGateway } from 'src/utils/api-gateway'
 import { endpoints } from 'src/constants/urls'
-import ExchangeLinkerApiCredentialDialog from 'src/layouts/components/telegram-trade-automaton/ExchangeLinkerApiCredentialDialog'
 
 type ApiCredential = {
   apiKey: string
@@ -56,8 +57,10 @@ const ExchangeLinker = () => {
       ])
 
       const updated_5 = {
-        ...(exchangesRes.isOk && { exchangesList: exchangesRes.data }),
-        ...(userExchangesRes.isOk && { userExchanges: userExchangesRes.data })
+        ...(exchangesRes.isOk &&
+          exchangesRes.data.retCode === 0 && { exchangesList: exchangesRes.data.result.exchanges }),
+        ...(userExchangesRes.isOk &&
+          userExchangesRes.data.retCode === 202 && { userExchanges: userExchangesRes.data.result.exchanges })
       }
 
       set_5(updated_5)
@@ -84,6 +87,8 @@ const ExchangeLinker = () => {
 
   const onSave = async () => {
     setSaveLoading(true)
+
+    console.log({ apiCredential })
     const req = await apiGateway({
       url: endpoints.exchange.ADD_USER_EXCHANGE,
       method: 'post',
@@ -114,6 +119,8 @@ const ExchangeLinker = () => {
     }
   }
 
+  console.log({ userExchanges })
+
   return (
     <React.Fragment>
       <ExchangeLinkerApiCredentialDialog
@@ -132,49 +139,51 @@ const ExchangeLinker = () => {
         loading={loading}
         onRefresh={fetchData}
       >
-        <List
-          sx={theme => ({
-            width: '100%',
-            borderWidth: '1px',
-            borderStyle: 'solid',
-            borderColor: theme.palette.divider,
-            flex: 1,
-            borderRadius: '5px'
-          })}
-        >
-          {exchangesList.map(e => {
-            const labelId = `checkbox-list-label-${e.id}`
-            const isConnected = Boolean(userExchanges.find(ue => ue.exchangeId === e.id))
-            const checked = selectedExchange?.id === e.id
+        <CustomScrollbar>
+          <List
+            sx={theme => ({
+              width: '100%',
+              borderWidth: '1px',
+              borderStyle: 'solid',
+              borderColor: theme.palette.divider,
+              flex: 1,
+              borderRadius: '5px'
+            })}
+          >
+            {exchangesList.map(e => {
+              const labelId = `checkbox-list-label-${e.id}`
+              const isConnected = Boolean(userExchanges.find(ue => ue.exchangeId === e.id))
+              const checked = selectedExchange?.id === e.id
 
-            return (
-              <ListItem key={e.id}>
-                <ExchangeListItemButton
-                  checked={checked}
-                  exchange={e}
-                  isConnected={isConnected}
-                  labelId={labelId}
-                  onSelectExchange={onSelectExchange}
-                />
-                <LoadingButton
-                  onClick={() => {
-                    setApiCredential({
-                      ...initialApiCredential,
-                      ...e
-                    })
-                  }}
-                  size='small'
-                  disabled={isConnected}
-                  loading={!isConnected && apiCredential.id === e.id && Boolean(apiCredential.id)}
-                  variant='contained'
-                  sx={{ ml: 2 }}
-                >
-                  {isConnected ? 'Connected' : 'Connect'}
-                </LoadingButton>
-              </ListItem>
-            )
-          })}
-        </List>
+              return (
+                <ListItem key={e.id}>
+                  <ExchangeListItemButton
+                    checked={checked}
+                    exchange={e}
+                    isConnected={isConnected}
+                    labelId={labelId}
+                    onSelectExchange={onSelectExchange}
+                  />
+                  <LoadingButton
+                    onClick={() => {
+                      setApiCredential({
+                        ...initialApiCredential,
+                        ...e
+                      })
+                    }}
+                    size='small'
+                    disabled={isConnected}
+                    loading={!isConnected && apiCredential.id === e.id && Boolean(apiCredential.id)}
+                    variant='contained'
+                    sx={{ ml: 2 }}
+                  >
+                    {isConnected ? 'Connected' : 'Connect'}
+                  </LoadingButton>
+                </ListItem>
+              )
+            })}
+          </List>
+        </CustomScrollbar>
       </TradingAlgorithmWizardContentWrapper>
     </React.Fragment>
   )

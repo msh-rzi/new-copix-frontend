@@ -18,6 +18,7 @@ import TradingAlgorithmWizardContentWrapper from './TradingAlgorithmWizardConten
 import useTradingAlgorithmWizardStore from 'src/zustand/useTradingAlgorithmWizardStore'
 import { apiGateway } from 'src/utils/api-gateway'
 import { endpoints } from 'src/constants/urls'
+import CustomScrollbar from 'src/@core/components/scrollbar'
 
 type obj = {
   Symbol: ''
@@ -87,27 +88,30 @@ const AlgorithmTester = () => {
   return (
     <TradingAlgorithmWizardContentWrapper title='Select a part of message and click on a button'>
       <Stack sx={{ flex: 1, width: '100%', gap: 4, flexDirection: 'row' }}>
-        <List
-          disablePadding
-          sx={theme => ({
-            borderWidth: '1px',
-            borderStyle: 'solid',
-            borderColor: theme.palette.divider,
-            flex: 1,
-            gap: 0,
-            borderRadius: '5px'
-          })}
-        >
-          {wizardData.MessagePickerState.messagesList.map(msg => (
-            <Tooltip key={msg.id} title={msg.message}>
-              <ListItem disablePadding sx={{ mt: 1 }}>
-                <ListItemButton role={undefined} dense onClick={() => onSelectMessage(msg)}>
-                  <ListItemText>{msg.message}</ListItemText>
-                </ListItemButton>
-              </ListItem>
-            </Tooltip>
-          ))}
-        </List>
+        <Stack flex={1}>
+          <CustomScrollbar>
+            <List
+              disablePadding
+              sx={theme => ({
+                borderWidth: '1px',
+                borderStyle: 'solid',
+                borderColor: theme.palette.divider,
+                gap: 0,
+                borderRadius: '5px'
+              })}
+            >
+              {wizardData.MessagePickerState.messagesList.map(msg => (
+                <Tooltip key={msg.id} title={msg.message}>
+                  <ListItem disablePadding sx={{ mt: 1 }}>
+                    <ListItemButton role={undefined} dense onClick={() => onSelectMessage(msg)}>
+                      <ListItemText>{msg.message}</ListItemText>
+                    </ListItemButton>
+                  </ListItem>
+                </Tooltip>
+              ))}
+            </List>
+          </CustomScrollbar>
+        </Stack>
         <Stack
           sx={theme => ({
             borderWidth: '1px',

@@ -18,6 +18,7 @@ import { apiGateway } from 'src/utils/api-gateway'
 const defaultProvider: AuthValuesType = {
   user: null,
   loading: true,
+  error: undefined,
   setUser: () => null,
   setLoading: () => Boolean,
   login: () => Promise.resolve(),
@@ -33,6 +34,7 @@ type Props = {
 
 const AuthProvider = ({ children }: Props) => {
   // ** States
+  const [error, setError] = useState(defaultProvider.error)
   const [user, setUser] = useState<UserDataType | null>(defaultProvider.user)
   const [loading, setLoading] = useState<boolean>(defaultProvider.loading)
 
@@ -52,7 +54,7 @@ const AuthProvider = ({ children }: Props) => {
           })
           .then(async response => {
             setLoading(false)
-            setUser({ ...response.data.userData })
+            setUser({ ...response.data.result.userData })
           })
           .catch(error => {
             localStorage.removeItem('userData')
@@ -79,13 +81,20 @@ const AuthProvider = ({ children }: Props) => {
     axios
       .post(endpoints.auth.LOGIN_EMAIL, params)
       .then(async response => {
-        params.rememberMe
-          ? window.localStorage.setItem(endpoints.auth.storageTokenKeyName, response.data.accessToken)
-          : null
+        console.log({ response })
+        console.log(response.data.retCode)
+        console.log(response.data.retCode !== 202)
+        if (response.data.retCode !== 202) {
+          setError({ message: response.data.retExtInfo, type: 'login' })
+
+          return
+        }
+        const { accessToken, userData } = response.data.result
+        params.rememberMe ? window.localStorage.setItem(endpoints.auth.storageTokenKeyName, accessToken) : null
         const returnUrl = router.query.returnUrl
 
-        setUser({ ...response.data.userData })
-        params.rememberMe ? window.localStorage.setItem('userData', JSON.stringify(response.data.userData)) : null
+        setUser({ ...userData })
+        params.rememberMe ? window.localStorage.setItem('userData', JSON.stringify(userData)) : null
 
         const redirectURL = returnUrl && returnUrl !== '/' ? returnUrl : '/'
 
@@ -113,9 +122,13 @@ const AuthProvider = ({ children }: Props) => {
         method: 'post'
       })
 
-      console.log({ req })
       if (req.isOk) {
-        const { accessToken, userData } = req.data
+        if (req.data.retCode !== 201) {
+          setError({ message: req.data.retExtInfo, type: 'register' })
+
+          return
+        }
+        const { accessToken, userData } = req.data.result
 
         // Save user data and access token to local storage
         window.localStorage.setItem(endpoints.auth.storageTokenKeyName, accessToken)
@@ -145,6 +158,7 @@ const AuthProvider = ({ children }: Props) => {
   const values = {
     user,
     loading,
+    error,
     setUser,
     setLoading,
     login: handleLogin,

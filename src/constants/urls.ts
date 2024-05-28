@@ -14,6 +14,8 @@ const exchangePages = '/exchange'
 
 const chatgptUrl = backendUrl + '/chatgpt'
 
+const robots = backendUrl + '/robot'
+
 export const endpoints = {
   // ** Auth URL
   auth: {
@@ -66,6 +68,17 @@ export const endpoints = {
 
     // TELEGRAM_DEFAULT_CHANNELS_MESSAGES: 'tel-def-chl-mgs',
     SAVED_ALGORITHMS: 'saved-algo'
+  },
+
+  // ** Robots URL
+  robot: {
+    // ** Backend Urls
+    GET_ROBOTS: robots + '/all-robots',
+    GET_USER_ROBOTS: robots + '/user-robots',
+
+    // ** Local storage and Cookies
+    ROBOTS: 'robots',
+    USER_ROBOTS: 'user-robots'
   },
 
   // ** Exchange URL

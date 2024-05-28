@@ -10,6 +10,7 @@ import Checkbox from '@mui/material/Checkbox'
 
 // ** Import Custom Component
 import TradingAlgorithmWizardContentWrapper from './TradingAlgorithmWizardContentWrapper'
+import CustomScrollbar from 'src/@core/components/scrollbar'
 
 // ** Import Hook
 import useTradingAlgorithmWizardStore, { initialAlgorithm } from 'src/zustand/useTradingAlgorithmWizardStore'
@@ -35,7 +36,7 @@ const MessagePicker = () => {
     })
     if (req.isOk) {
       setLoading(false)
-      setMessagePickerState({ messagesList: req.data.filter((m: Message) => m.message) })
+      setMessagePickerState({ messagesList: req.data.result.history.filter((m: Message) => m.message) })
     } else {
       console.log(req.error)
       setLoading(false)
@@ -62,38 +63,37 @@ const MessagePicker = () => {
       loading={loading}
       onRefresh={getMessages}
     >
-      <List
-        sx={theme => ({
-          width: '100%',
-          borderWidth: '1px',
-          borderStyle: 'solid',
-          borderColor: theme.palette.divider,
-          flex: 1,
-          borderRadius: '5px'
-        })}
-      >
-        {wizardData.MessagePickerState.messagesList.map(msg => {
-          const labelId = `checkbox-list-label-${msg.id}`
-          const checked = wizardData.MessagePickerState.selectedMessage?.id === msg.id
+      <CustomScrollbar>
+        <List
+          sx={{
+            width: '100%',
+            flex: 1,
+            padding: 0
+          }}
+        >
+          {wizardData.MessagePickerState.messagesList.map(msg => {
+            const labelId = `checkbox-list-label-${msg.id}`
+            const checked = wizardData.MessagePickerState.selectedMessage?.id === msg.id
 
-          return (
-            <ListItem key={msg.id} disablePadding>
-              <ListItemButton role={undefined} dense onClick={() => onSelectMessage(msg)}>
-                <ListItemIcon>
-                  <Checkbox
-                    edge='start'
-                    checked={checked}
-                    tabIndex={-1}
-                    disableRipple
-                    inputProps={{ 'aria-labelledby': labelId }}
-                  />
-                </ListItemIcon>
-                <ListItemText id={labelId} primary={msg.message} />
-              </ListItemButton>
-            </ListItem>
-          )
-        })}
-      </List>
+            return (
+              <ListItem key={msg.id} disablePadding>
+                <ListItemButton role={undefined} dense onClick={() => onSelectMessage(msg)}>
+                  <ListItemIcon>
+                    <Checkbox
+                      edge='start'
+                      checked={checked}
+                      tabIndex={-1}
+                      disableRipple
+                      inputProps={{ 'aria-labelledby': labelId }}
+                    />
+                  </ListItemIcon>
+                  <ListItemText id={labelId} primary={msg.message} />
+                </ListItemButton>
+              </ListItem>
+            )
+          })}
+        </List>
+      </CustomScrollbar>
     </TradingAlgorithmWizardContentWrapper>
   )
 }

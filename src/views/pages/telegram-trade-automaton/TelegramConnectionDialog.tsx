@@ -16,9 +16,10 @@ import { endpoints } from 'src/constants/urls'
 
 // ** Import Hooks
 import useTelegramStore from 'src/zustand/useTelegramStore'
+import useLocalStorage from 'src/hooks/useLocalStorage'
 
 const EnterNumber: React.FC<{ onNextClick: () => void }> = ({ onNextClick }) => {
-  const [phoneNumber, setPhoneNumber] = useState('')
+  const { storedValue: phoneNumber, setValue: setPhoneNumber } = useLocalStorage('telegramPhoneNumber', '')
   const [loading, setLoading] = useState(false)
 
   const onClick = async () => {
@@ -75,7 +76,7 @@ const EnterConfirmCode: React.FC<{ onConnectClick: () => void; onEditNumber: () 
   onConnectClick,
   onEditNumber
 }) => {
-  const [code, setCode] = useState('')
+  const { storedValue: code, setValue: setCode } = useLocalStorage('telegramCode', '')
   const [loading, setLoading] = useState(false)
   const { setTelegramData } = useTelegramStore()
 
@@ -90,7 +91,7 @@ const EnterConfirmCode: React.FC<{ onConnectClick: () => void; onEditNumber: () 
 
       if (req.isOk) {
         setTelegramData({
-          ...req.data,
+          ...req.data.result,
           connectionStatus: true
         })
         onConnectClick()
@@ -138,7 +139,7 @@ const TelegramConnectionDialog: React.FC<{
   setIsConnectedToTelegram: (flag: boolean) => void
 }> = ({ loading, setLoading, setIsConnectedToTelegram }) => {
   const { telegramData, setOpenAuthDialog, setConnectionStatus, setTelegramData } = useTelegramStore()
-  const [step, setStep] = useState(0)
+  const { storedValue: step, setValue: setStep, removeByKey } = useLocalStorage('telegramStep', 0)
 
   useEffect(() => {
     try {
@@ -149,7 +150,7 @@ const TelegramConnectionDialog: React.FC<{
         })
 
         if (req.isOk) {
-          if (req.data.isConnect) {
+          if (req.data.result.isConnect) {
             setIsConnectedToTelegram(false)
             const me = await apiGateway({
               url: endpoints.telegram.GET_ME
@@ -158,7 +159,7 @@ const TelegramConnectionDialog: React.FC<{
             if (me.isOk) {
               setTelegramData({
                 ...telegramData,
-                connectionStatus: req.data.isConnect,
+                connectionStatus: req.data.result.isConnect,
                 ...me.data
               })
             }
@@ -175,20 +176,19 @@ const TelegramConnectionDialog: React.FC<{
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  const onClose = () => {
-    setOpenAuthDialog(false)
-  }
-
   const onConnectClick = () => {
     setOpenAuthDialog(false)
     setConnectionStatus(true)
     setIsConnectedToTelegram(false)
+    removeByKey()
+    removeByKey('telegramPhoneNumber')
+    removeByKey('telegramCode')
   }
 
   if (telegramData.connectionStatus || loading) return null
 
   return (
-    <Dialog maxWidth='md' fullWidth open={telegramData.openAuthDialog} onClose={onClose}>
+    <Dialog maxWidth='md' fullWidth open={telegramData.openAuthDialog}>
       {step === 0 && <EnterNumber onNextClick={() => setStep(step + 1)} />}
       {step === 1 && <EnterConfirmCode onConnectClick={onConnectClick} onEditNumber={() => setStep(step - 1)} />}
     </Dialog>

@@ -1,13 +1,11 @@
 export type robotsConstantsType = {
   name: string
-  icon: string
   path: string
   description: string
 }
 
 const robotsConstants: robotsConstantsType[] = [
   {
-    icon: '/images/avatars/rocket.png',
     name: 'Telegram Trade Automaton',
     path: '/robot/telegram-trade-automaton',
     description:
