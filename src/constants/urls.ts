@@ -90,8 +90,8 @@ export const endpoints = {
     CONNECT_TO_BINGX: exchangeUrl + '/connect-to-bingx',
     ADD_ALGORITHM: exchangeUrl + '/add-algorithm',
     ADD_USER_EXCHANGE: exchangeUrl + '/add-user-exchange',
-    GET_BYBIT_BALANCE: exchangeUrl + '/get-bybit-balance',
-    GET_BYBIT_ACTIVE_ORDERS: exchangeUrl + '/get-bybit-active-orders',
+    GET_BYBIT_BALANCE: exchangeUrl + '/bybit-balance',
+    GET_BYBIT_ACTIVE_ORDERS: exchangeUrl + '/bybit-active-orders',
 
     // ** Pages
     BINGX: exchangePages + '/bingx',

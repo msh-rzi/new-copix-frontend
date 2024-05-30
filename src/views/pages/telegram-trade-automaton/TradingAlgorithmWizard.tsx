@@ -17,8 +17,7 @@ import { endpoints } from 'src/constants/urls'
 
 const TradingAlgorithmWizardCard: React.FC<{ disableView: boolean }> = ({ disableView }) => {
   const { wizardData, setStep } = useTradingAlgorithmWizardStore()
-  const { stepsList, step, TelegramChannelListState, MessagePickerState, AlgorithmListState, AlgorithmComposerState } =
-    wizardData
+  const { stepsList, step, TelegramChannelListState, MessagePickerState, AlgorithmListState } = wizardData
   const [saveLoading, setSaveLoading] = useState(false)
 
   const Component: Record<UseTradingAlgorithmWizardStoreStep, ReactNode> = {
@@ -67,8 +66,7 @@ const TradingAlgorithmWizardCard: React.FC<{ disableView: boolean }> = ({ disabl
   const isNextDisabled =
     (step === 'ChannelsList' && !TelegramChannelListState.selectedChannel) ||
     (step === 'MessagePicker' && !MessagePickerState.selectedMessage) ||
-    (step === 'AlgorithmsList' && !AlgorithmListState.selectedAlgorithm.id) ||
-    (step === 'AlgorithmComposer' && !AlgorithmComposerState.usedAlgorithmKeys.length)
+    (step === 'AlgorithmsList' && !AlgorithmListState.selectedAlgorithm.id)
 
   return (
     <TradingAlgorithmWizardLayoutCard
