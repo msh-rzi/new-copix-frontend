@@ -116,12 +116,15 @@ const App = (props: ExtendedAppProps) => {
   return (
     <CacheProvider value={emotionCache}>
       <Head>
-        <title>{`${themeConfig.templateName} - Material Design React Admin Template`}</title>
+        <title>{`${themeConfig.templateName} - Explore the future of cryptocurrency trading with our innovative app designed for both beginners and seasoned investors. Our platform features advanced automation tools, powerful trading bots, and auto trader functionalities to help you optimize your trading strategies and maximize your potential.`}</title>
         <meta
           name='description'
-          content={`${themeConfig.templateName} – Material Design React Admin Dashboard Template – is the most developer friendly & highly customizable Admin Dashboard Template based on MUI v5.`}
+          content={`${themeConfig.templateName} – Explore the future of cryptocurrency trading with our innovative app designed for both beginners and seasoned investors. Our platform features advanced automation tools, powerful trading bots, and auto trader functionalities to help you optimize your trading strategies and maximize your potential. .`}
         />
-        <meta name='keywords' content='Material Design, MUI, Admin Template, React Admin Template' />
+        <meta
+          name='keywords'
+          content='Explore the future of cryptocurrency trading with our innovative app designed for both beginners and seasoned investors. Our platform features advanced automation tools, powerful trading bots, and auto trader functionalities to help you optimize your trading strategies and maximize your potential.'
+        />
         <meta name='viewport' content='initial-scale=1, width=device-width' />
       </Head>
 

@@ -109,10 +109,10 @@ const mapper = [
 ]
 
 const defaultValues: RegisterParams = {
-  password: '12345678',
-  email: 'mehdi.rezaei879@gmail.com',
-  firstName: 'Mehdi',
-  lastName: 'Rezaei'
+  password: '',
+  email: '',
+  firstName: '',
+  lastName: ''
 }
 
 const Register = () => {
