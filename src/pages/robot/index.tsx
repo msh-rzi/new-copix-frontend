@@ -63,7 +63,8 @@ const Robots = () => {
   }
 
   useEffect(() => {
-    getRobots()
+    if (!robots.length) getRobots()
+    else setLoading(false)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
@@ -80,7 +81,7 @@ const Robots = () => {
   console.log({ userRobots })
 
   return (
-    <Grid container>
+    <Grid container spacing={6}>
       {loading ? (
         <Grid
           item
@@ -103,7 +104,7 @@ const Robots = () => {
           const isBotStarted = !!userRobots.find(ub => ub.robotsId === bot.id)
 
           return (
-            <Grid key={bot.name} xs={12} sm={6} md={4}>
+            <Grid item key={bot.name} xs={12} sm={6} md={4}>
               <Card
                 cardContentProps={{
                   sx: {

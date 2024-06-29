@@ -32,7 +32,10 @@ export const endpoints = {
     LOGIN_FACEBOOK: authUrl + '/facebook/login',
     LOGIN_GOOGLE: authUrl + '/google/login',
     storageTokenKeyName: 'sub-acc-tkn',
-    onTokenExpiration: 'sub-exp-tkn'
+    onTokenExpiration: 'sub-exp-tkn',
+
+    // ** Local storage and Cookies
+    USER_DATA: 'userData'
   },
 
   // ** Algorithm URL

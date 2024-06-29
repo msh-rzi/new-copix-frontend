@@ -44,6 +44,7 @@ const AuthProvider = ({ children }: Props) => {
   useEffect(() => {
     const initAuth = async (): Promise<void> => {
       const storedToken = window.localStorage.getItem(endpoints.auth.storageTokenKeyName)!
+      console.log({ storedToken })
       if (storedToken) {
         setLoading(true)
         await axios
@@ -58,8 +59,7 @@ const AuthProvider = ({ children }: Props) => {
           })
           .catch(error => {
             localStorage.removeItem('userData')
-            localStorage.removeItem('refreshToken')
-            localStorage.removeItem('accessToken')
+            localStorage.removeItem(endpoints.auth.storageTokenKeyName)
             setUser(null)
             setLoading(false)
             console.log(error)
@@ -70,6 +70,7 @@ const AuthProvider = ({ children }: Props) => {
           })
       } else {
         setLoading(false)
+        router.replace('/')
       }
     }
 

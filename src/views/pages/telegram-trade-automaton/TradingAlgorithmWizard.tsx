@@ -1,33 +1,36 @@
-import React, { ReactNode, useState } from 'react'
+import React, { useState } from 'react'
+import dynamic from 'next/dynamic'
 
 // ** Import Custom Components
 import TradingAlgorithmWizardLayoutCard from 'src/views/pages/telegram-trade-automaton/TradingAlgorithmWizardWrapperCard'
-import TelegramChannelList from './TelegramChannelList'
-import MessagePicker from './MessagePicker'
-import AlgorithmComposer from './AlgorithmComposer'
-import ExchangeLinker from './ExchangeLinker'
-import AlgorithmTester from './AlgorithmTester'
-import AlgorithmSaver from './AlgorithmSaver'
-import AlgorithmList from './AlgorithmsList'
 
 // ** Import Hooks
 import useTradingAlgorithmWizardStore from 'src/zustand/useTradingAlgorithmWizardStore'
 import { apiGateway } from 'src/utils/api-gateway'
 import { endpoints } from 'src/constants/urls'
 
+// ** Dynamic Imports for Lazy Loading Components
+const DynamicTelegramChannelList = dynamic(() => import('./TelegramChannelList'), { loading: () => <p>Loading...</p> })
+const DynamicMessagePicker = dynamic(() => import('./MessagePicker'), { loading: () => <p>Loading...</p> })
+const DynamicAlgorithmComposer = dynamic(() => import('./AlgorithmComposer'), { loading: () => <p>Loading...</p> })
+const DynamicExchangeLinker = dynamic(() => import('./ExchangeLinker'), { loading: () => <p>Loading...</p> })
+const DynamicAlgorithmTester = dynamic(() => import('./AlgorithmTester'), { loading: () => <p>Loading...</p> })
+const DynamicAlgorithmSaver = dynamic(() => import('./AlgorithmSaver'), { loading: () => <p>Loading...</p> })
+const DynamicAlgorithmList = dynamic(() => import('./AlgorithmsList'), { loading: () => <p>Loading...</p> })
+
 const TradingAlgorithmWizardCard: React.FC<{ disableView: boolean }> = ({ disableView }) => {
   const { wizardData, setStep } = useTradingAlgorithmWizardStore()
   const { stepsList, step, TelegramChannelListState, MessagePickerState, AlgorithmListState } = wizardData
   const [saveLoading, setSaveLoading] = useState(false)
 
-  const Component: Record<UseTradingAlgorithmWizardStoreStep, ReactNode> = {
-    ChannelsList: <TelegramChannelList />,
-    MessagePicker: <MessagePicker />,
-    AlgorithmsList: <AlgorithmList />,
-    AlgorithmComposer: <AlgorithmComposer />,
-    ExchangeLinker: <ExchangeLinker />,
-    AlgorithmTester: <AlgorithmTester />,
-    AlgorithmSaver: <AlgorithmSaver />
+  const Component: Record<UseTradingAlgorithmWizardStoreStep, React.ReactNode> = {
+    ChannelsList: <DynamicTelegramChannelList />,
+    MessagePicker: <DynamicMessagePicker />,
+    AlgorithmsList: <DynamicAlgorithmList />,
+    AlgorithmComposer: <DynamicAlgorithmComposer />,
+    ExchangeLinker: <DynamicExchangeLinker />,
+    AlgorithmTester: <DynamicAlgorithmTester />,
+    AlgorithmSaver: <DynamicAlgorithmSaver />
   }
 
   const onNextClick = () => {

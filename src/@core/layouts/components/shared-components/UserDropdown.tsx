@@ -22,6 +22,8 @@ import { useAuth } from 'src/hooks/useAuth'
 
 // ** Type Imports
 import { Settings } from 'src/@core/context/settingsContext'
+import useLocalStorage from 'src/hooks/useLocalStorage'
+import { endpoints } from 'src/constants/urls'
 
 interface Props {
   settings: Settings
@@ -42,12 +44,21 @@ const MenuItemStyled = styled(MenuItem)<MenuItemProps>(({ theme }) => ({
   }
 }))
 
+interface UserData {
+  email: string
+  firstName: string
+  lastName: string
+  role: string
+  status: string
+}
+
 const UserDropdown = (props: Props) => {
   // ** Props
   const { settings } = props
 
   // ** States
   const [anchorEl, setAnchorEl] = useState<Element | null>(null)
+  const { storedValue: userData } = useLocalStorage<Partial<UserData>>(endpoints.auth.USER_DATA, {})
 
   // ** Hooks
   const router = useRouter()
@@ -99,7 +110,7 @@ const UserDropdown = (props: Props) => {
           horizontal: 'right'
         }}
       >
-        <Avatar alt='Mehdi' src='' onClick={handleDropdownOpen} sx={{ width: 38, height: 38 }} />
+        <Avatar alt={userData.firstName} src='' onClick={handleDropdownOpen} sx={{ width: 38, height: 38 }} />
       </Badge>
       <Menu
         anchorEl={anchorEl}
@@ -119,11 +130,11 @@ const UserDropdown = (props: Props) => {
                 horizontal: 'right'
               }}
             >
-              <Avatar alt='Mehdi' src='' sx={{ width: '2.5rem', height: '2.5rem' }} />
+              <Avatar alt={userData.firstName} src='' sx={{ width: '2.5rem', height: '2.5rem' }} />
             </Badge>
             <Box sx={{ display: 'flex', ml: 2.5, alignItems: 'flex-start', flexDirection: 'column' }}>
-              <Typography sx={{ fontWeight: 500 }}>Mehdi</Typography>
-              <Typography variant='body2'>Admin</Typography>
+              <Typography sx={{ fontWeight: 500 }}>{`${userData.firstName} ${userData.lastName}`}</Typography>
+              <Typography variant='body2'>{userData.role}</Typography>
             </Box>
           </Box>
         </Box>
